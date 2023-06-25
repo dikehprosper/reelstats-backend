@@ -136,7 +136,7 @@ app.listen(5000, () => {
     console.log("Server is running on port 5000");
 });
 
-app.get("/fetch-data", (req, res) => {
+app.get("/fetch", (req, res) => {
 
     fs.readFile("scraped-data.json", (err, data) => {
         if (err) {
