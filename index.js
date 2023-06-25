@@ -3,15 +3,11 @@ const cors = require("cors");
 const app = express();
 app.use(cors());
 const fs = require("fs");
-const chromium = require("chrome-aws-lambda");
+const puppeteer = require("puppeteer");
 
 async function getBrowserInstance() {
-    const executablePath = await chromium.executablePath;
-
-    return chromium.puppeteer.launch({
-        args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
-        executablePath,
+    return puppeteer.launch({
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
         ignoreHTTPSErrors: true,
         headless: "new"
     });
@@ -65,27 +61,45 @@ async function scrapeAndStoreData() {
             );
 
             const statistics = await page.evaluate(() =>
-                Array.from(document.querySelectorAll('.statistics > tbody > tr > td'), (e) => e.textContent)
+                Array.from(
+                    document.querySelectorAll('.statistics > tbody > tr > td'),
+                    (e) => e.textContent
+                )
             );
 
             const statistics1 = await page.evaluate(() =>
-                Array.from(document.querySelectorAll('.statistics > tbody > tr > td > .colours'), (e) => e.textContent)
+                Array.from(
+                    document.querySelectorAll('.statistics > tbody > tr > td > .colours'),
+                    (e) => e.textContent
+                )
             );
 
             const statistics2 = await page.evaluate(() =>
-                Array.from(document.querySelectorAll('.hot .ball-holder .ball-value'), (e) => e.textContent)
+                Array.from(
+                    document.querySelectorAll('.hot .ball-holder .ball-value'),
+                    (e) => e.textContent
+                )
             );
 
             const statistics3 = await page.evaluate(() =>
-                Array.from(document.querySelectorAll('.cold .ball-holder .ball-value'), (e) => e.textContent)
+                Array.from(
+                    document.querySelectorAll('.cold .ball-holder .ball-value'),
+                    (e) => e.textContent
+                )
             );
 
             const statistics4 = await page.evaluate(() =>
-                Array.from(document.querySelectorAll('.hot .stats__numbers-count--value'), (e) => e.textContent)
+                Array.from(
+                    document.querySelectorAll('.hot .stats__numbers-count--value'),
+                    (e) => e.textContent
+                )
             );
 
             const statistics5 = await page.evaluate(() =>
-                Array.from(document.querySelectorAll('.cold .stats__numbers-count--value'), (e) => e.textContent)
+                Array.from(
+                    document.querySelectorAll('.cold .stats__numbers-count--value'),
+                    (e) => e.textContent
+                )
             );
 
             await browser.close();
@@ -102,9 +116,6 @@ async function scrapeAndStoreData() {
 
             const jsonData = JSON.stringify(data);
             let previousData = fs.readFileSync("scraped-data.json", "utf8"); // Read the current data from scraped-data.json
-
-
-            fs.readFileSync("scraped-data.json", "utf8")
 
             // Check if the newly scraped data is different from the previous data
             if (jsonData !== previousData) {
@@ -137,7 +148,6 @@ app.listen(5000, () => {
 });
 
 app.get("/fetch", (req, res) => {
-
     fs.readFile("scraped-data.json", (err, data) => {
         if (err) {
             console.error("An error occurred while reading the file:", err);
@@ -148,8 +158,3 @@ app.get("/fetch", (req, res) => {
         }
     });
 });
-
-
-
-
-
