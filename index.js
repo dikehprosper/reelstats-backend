@@ -103,7 +103,10 @@ async function scrapeAndStoreData() {
             );
 
             await browser.close();
-
+            console.log(balls);
+            console.log(statistics);
+            console.log(statistics1);
+            console.log(statistics2);
             const data = {
                 balls,
                 statistics,
