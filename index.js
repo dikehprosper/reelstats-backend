@@ -7,11 +7,15 @@ const puppeteer = require("puppeteer");
 
 async function getBrowserInstance() {
     return puppeteer.launch({
+        executablePath: '/usr/bin/google-chrome-stable',
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
         ignoreHTTPSErrors: true,
-        headless: "new"
+        headless: true
     });
+
 }
+
+
 
 // Countdown section
 let count = 49;
@@ -51,10 +55,13 @@ async function scrapeAndStoreData() {
         try {
             const browser = await getBrowserInstance();
             const page = await browser.newPage();
-
+            console.log(browser);
+            console.log(page);
+            
             await page.goto(
                 "https://logigames.bet9ja.com/Games/Launcher?gameId=11000&provider=0&pff=1&skin=201"
             );
+            
 
             const balls = await page.evaluate(() =>
                 Array.from(document.querySelectorAll(".balls span"), (e) => e.textContent)
@@ -103,10 +110,8 @@ async function scrapeAndStoreData() {
             );
 
             await browser.close();
-            console.log(balls);
-            console.log(statistics);
-            console.log(statistics1);
-            console.log(statistics2);
+
+
             const data = {
                 balls,
                 statistics,
