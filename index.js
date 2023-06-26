@@ -18,7 +18,7 @@ async function getBrowserInstance() {
 
 
 // Countdown section
-let count = 10;
+let count = 49;
 let activeButton = 0;
 let interval;
 
@@ -36,7 +36,7 @@ function startCountdown() {
 }
 
 function restartCountdown() {
-    count = 10;
+    count = 49;
     activeButton = 4;
     startCountdown(); // Start the countdown again
 }
@@ -55,88 +55,88 @@ async function scrapeAndStoreData() {
         try {
             const browser = await getBrowserInstance();
             const page = await browser.newPage();
-            // console.log(browser);
-            // console.log(page);
 
-             await page.goto(
+
+            await page.goto(
                 "https://logigames.bet9ja.com/Games/Launcher?gameId=11000&provider=0&pff=1&skin=201"
             );
 
 
-            // const balls = await page.evaluate(() =>
-            //     document.querySelectorAll(".balls span"), (e) => e.textContent
-            // );
+
 
             await page.waitForSelector('.balls span'); // Wait for the target elements to be available
 
-            const valuesArray = await page.evaluate(() => {
+            const balls = await page.evaluate(() => {
                 const elements = Array.from(document.querySelectorAll('.balls span'));
                 return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
             });
 
-         
+            await page.waitForSelector('.statistics > tbody > tr > td'); // Wait for the target elements to be available
 
-            // Use the scraped values as needed
-            console.log(valuesArray);
-
-
-            // console.log(balls)
-
+            const statistics = await page.evaluate(() => {
+                const elements = Array.from(document.querySelectorAll('.statistics > tbody > tr > td'));
+                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+            });
 
 
-            // const statistics = await page.evaluate(() =>
-            //     Array.from(
-            //         document.querySelectorAll('.statistics > tbody > tr > td'),
-            //         (e) => e.textContent
-            //     )
-            // );
+            await page.waitForSelector('.statistics > tbody > tr > td > .colours'); // Wait for the target elements to be available
 
-            // const statistics1 = await page.evaluate(() =>
-            //     Array.from(
-            //         document.querySelectorAll('.statistics > tbody > tr > td > .colours'),
-            //         (e) => e.textContent
-            //     )
-            // );
+            const statistics1 = await page.evaluate(() => {
+                const elements = Array.from(document.querySelectorAll('.statistics > tbody > tr > td > .colours'));
+                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+            });
 
-            // const statistics2 = await page.evaluate(() =>
-            //     Array.from(
-            //         document.querySelectorAll('.hot .ball-holder .ball-value'),
-            //         (e) => e.textContent
-            //     )
-            // );
 
-            // const statistics3 = await page.evaluate(() =>
-            //     Array.from(
-            //         document.querySelectorAll('.cold .ball-holder .ball-value'),
-            //         (e) => e.textContent
-            //     )
-            // );
+            await page.waitForSelector('.hot .ball-holder .ball-value'); // Wait for the target elements to be available
 
-            // const statistics4 = await page.evaluate(() =>
-            //     Array.from(
-            //         document.querySelectorAll('.hot .stats__numbers-count--value'),
-            //         (e) => e.textContent
-            //     )
-            // );
+            const statistics2 = await page.evaluate(() => {
+                const elements = Array.from(document.querySelectorAll('.hot .ball-holder .ball-value'));
+                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+            });
 
-            // const statistics5 = await page.evaluate(() =>
-            //     Array.from(
-            //         document.querySelectorAll('.cold .stats__numbers-count--value'),
-            //         (e) => e.textContent
-            //     )
-            // );
+
+
+            await page.waitForSelector('.cold .ball-holder .ball-value'); // Wait for the target elements to be available
+
+            const statistics3 = await page.evaluate(() => {
+                const elements = Array.from(document.querySelectorAll('.cold .ball-holder .ball-value'));
+                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+            })
+
+
+
+            await page.waitForSelector('.hot .stats__numbers-count--value'); // Wait for the target elements to be available
+
+            const statistics4 = await page.evaluate(() => {
+                const elements = Array.from(document.querySelectorAll('.hot .stats__numbers-count--value'));
+                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+            });
+
+
+
+
+
+            await page.waitForSelector('.cold .stats__numbers-count--value'); // Wait for the target elements to be available
+
+            const statistics5 = await page.evaluate(() => {
+                const elements = Array.from(document.querySelectorAll('.cold .stats__numbers-count--value'));
+                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+            });
+
+
+
 
             await browser.close();
 
 
             const data = {
-                // balls,
-                // statistics,
-                // statistics1,
-                // statistics2,
-                // statistics3,
-                // statistics4,
-                // statistics5,
+                balls,
+                statistics,
+                statistics1,
+                statistics2,
+                statistics3,
+                statistics4,
+                statistics5,
             };
 
             const jsonData = JSON.stringify(data);
