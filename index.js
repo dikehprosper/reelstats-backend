@@ -7,10 +7,9 @@ const puppeteer = require("puppeteer");
 
 async function getBrowserInstance() {
     return puppeteer.launch({
-        executablePath: '/usr/bin/google-chrome-stable',
         args: ["--no-sandbox", "--disable-setuid-sandbox"],
         ignoreHTTPSErrors: true,
-        headless: true
+        headless: "new"
     });
 
 }
@@ -55,13 +54,13 @@ async function scrapeAndStoreData() {
         try {
             const browser = await getBrowserInstance();
             const page = await browser.newPage();
-            console.log(browser);
-            console.log(page);
-            
+            // console.log(browser);
+            // console.log(page);
+
             await page.goto(
                 "https://logigames.bet9ja.com/Games/Launcher?gameId=11000&provider=0&pff=1&skin=201"
             );
-            
+
 
             const balls = await page.evaluate(() =>
                 Array.from(document.querySelectorAll(".balls span"), (e) => e.textContent)
@@ -123,11 +122,11 @@ async function scrapeAndStoreData() {
             };
 
             const jsonData = JSON.stringify(data);
-            let previousData = fs.readFileSync("scraped-data.json", "utf8"); // Read the current data from scraped-data.json
+            let previousData = fs.readFileSync("./scraped-data.json", "utf8"); // Read the current data from scraped-data.json
 
             // Check if the newly scraped data is different from the previous data
             if (jsonData !== previousData) {
-                fs.writeFile("scraped-data.json", jsonData, (err) => {
+                fs.writeFile("./scraped-data.json", jsonData, (err) => {
                     if (err) {
                         console.error("An error occurred while writing the file:", err);
                     } else {
@@ -156,7 +155,7 @@ app.listen(5000, () => {
 });
 
 app.get("/fetch", (req, res) => {
-    fs.readFile("scraped-data.json", (err, data) => {
+    fs.readFile("./scraped-data.json", (err, data) => {
         if (err) {
             console.error("An error occurred while reading the file:", err);
             res.status(500).send("An error occurred while fetching the data.");
