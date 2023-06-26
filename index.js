@@ -4,6 +4,7 @@ const app = express();
 app.use(cors());
 const fs = require("fs");
 const puppeteer = require("puppeteer");
+const cheerio = require('cheerio');
 
 async function getBrowserInstance() {
     return puppeteer.launch({
@@ -17,7 +18,7 @@ async function getBrowserInstance() {
 
 
 // Countdown section
-let count = 49;
+let count = 10;
 let activeButton = 0;
 let interval;
 
@@ -35,7 +36,7 @@ function startCountdown() {
 }
 
 function restartCountdown() {
-    count = 49;
+    count = 10;
     activeButton = 4;
     startCountdown(); // Start the countdown again
 }
@@ -57,16 +58,32 @@ async function scrapeAndStoreData() {
             // console.log(browser);
             // console.log(page);
 
-            await page.goto(
+             await page.goto(
                 "https://logigames.bet9ja.com/Games/Launcher?gameId=11000&provider=0&pff=1&skin=201"
             );
 
 
-            const balls = await page.evaluate(() =>
-                Array.from(document.querySelectorAll(".balls span"), (e) => e.textContent)
-            );
+            // const balls = await page.evaluate(() =>
+            //     document.querySelectorAll(".balls span"), (e) => e.textContent
+            // );
 
-            console.log(balls)
+            await page.waitForSelector('.balls span'); // Wait for the target elements to be available
+
+            const valuesArray = await page.evaluate(() => {
+                const elements = Array.from(document.querySelectorAll('.balls span'));
+                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+            });
+
+         
+
+            // Use the scraped values as needed
+            console.log(valuesArray);
+
+
+            // console.log(balls)
+
+
+
             // const statistics = await page.evaluate(() =>
             //     Array.from(
             //         document.querySelectorAll('.statistics > tbody > tr > td'),
@@ -113,7 +130,7 @@ async function scrapeAndStoreData() {
 
 
             const data = {
-                balls,
+                // balls,
                 // statistics,
                 // statistics1,
                 // statistics2,
