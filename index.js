@@ -66,59 +66,60 @@ async function scrapeAndStoreData() {
                 Array.from(document.querySelectorAll(".balls span"), (e) => e.textContent)
             );
 
-            const statistics = await page.evaluate(() =>
-                Array.from(
-                    document.querySelectorAll('.statistics > tbody > tr > td'),
-                    (e) => e.textContent
-                )
-            );
+            console.log(balls)
+            // const statistics = await page.evaluate(() =>
+            //     Array.from(
+            //         document.querySelectorAll('.statistics > tbody > tr > td'),
+            //         (e) => e.textContent
+            //     )
+            // );
 
-            const statistics1 = await page.evaluate(() =>
-                Array.from(
-                    document.querySelectorAll('.statistics > tbody > tr > td > .colours'),
-                    (e) => e.textContent
-                )
-            );
+            // const statistics1 = await page.evaluate(() =>
+            //     Array.from(
+            //         document.querySelectorAll('.statistics > tbody > tr > td > .colours'),
+            //         (e) => e.textContent
+            //     )
+            // );
 
-            const statistics2 = await page.evaluate(() =>
-                Array.from(
-                    document.querySelectorAll('.hot .ball-holder .ball-value'),
-                    (e) => e.textContent
-                )
-            );
+            // const statistics2 = await page.evaluate(() =>
+            //     Array.from(
+            //         document.querySelectorAll('.hot .ball-holder .ball-value'),
+            //         (e) => e.textContent
+            //     )
+            // );
 
-            const statistics3 = await page.evaluate(() =>
-                Array.from(
-                    document.querySelectorAll('.cold .ball-holder .ball-value'),
-                    (e) => e.textContent
-                )
-            );
+            // const statistics3 = await page.evaluate(() =>
+            //     Array.from(
+            //         document.querySelectorAll('.cold .ball-holder .ball-value'),
+            //         (e) => e.textContent
+            //     )
+            // );
 
-            const statistics4 = await page.evaluate(() =>
-                Array.from(
-                    document.querySelectorAll('.hot .stats__numbers-count--value'),
-                    (e) => e.textContent
-                )
-            );
+            // const statistics4 = await page.evaluate(() =>
+            //     Array.from(
+            //         document.querySelectorAll('.hot .stats__numbers-count--value'),
+            //         (e) => e.textContent
+            //     )
+            // );
 
-            const statistics5 = await page.evaluate(() =>
-                Array.from(
-                    document.querySelectorAll('.cold .stats__numbers-count--value'),
-                    (e) => e.textContent
-                )
-            );
+            // const statistics5 = await page.evaluate(() =>
+            //     Array.from(
+            //         document.querySelectorAll('.cold .stats__numbers-count--value'),
+            //         (e) => e.textContent
+            //     )
+            // );
 
             await browser.close();
 
 
             const data = {
                 balls,
-                statistics,
-                statistics1,
-                statistics2,
-                statistics3,
-                statistics4,
-                statistics5,
+                // statistics,
+                // statistics1,
+                // statistics2,
+                // statistics3,
+                // statistics4,
+                // statistics5,
             };
 
             const jsonData = JSON.stringify(data);
