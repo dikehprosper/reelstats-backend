@@ -24,7 +24,7 @@ let interval;
 
 function startCountdown() {
     interval = setInterval(() => {
-       
+
         if (count > 0) {
             count--;
             activeButton++;
@@ -157,6 +157,8 @@ async function scrapeAndStoreData() {
             }
         } catch (error) {
             console.error("An error occurred during web scraping:", error);
+            res.status(500).send("Something went wrong on the server.");
+
         }
     }
 }
