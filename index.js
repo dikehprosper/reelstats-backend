@@ -31,9 +31,7 @@ function startCountdown() {
             restartCountdown();
         }
 
-        if (count === 6) {
-            scrapeAndStoreData(); // Call the scrapeAndStoreData() function here when count is 6
-        }
+
         console.log(count);
     }, 1000);
 }
@@ -57,7 +55,15 @@ setInterval(() => {
 
 
 
-
+setInterval(async () => {
+    if (count === 6) {
+        try {
+            await scrapeAndStoreData();
+        } catch (error) {
+            console.error("An error occurred during scraping:", error);
+        }
+    }
+}, 1000);
 
 async function scrapeAndStoreData() {
     console.log("started")
@@ -180,13 +186,18 @@ app.listen(5000, () => {
 });
 
 app.get("/fetch", (req, res) => {
-    fs.readFile("./scraped-data.json", (err, data) => {
-        if (err) {
-            console.error("An error occurred while reading the file:", err);
-            res.status(500).send("An error occurred while fetching the data.");
-        } else {
-            const jsonData = JSON.parse(data);
-            res.status(200).json(jsonData);
-        }
-    });
+    try {
+        fs.readFile("./scraped-data.json", (err, data) => {
+            if (err) {
+                console.error("An error occurred while reading the file:", err);
+                res.status(500).send("An error occurred while fetching the data.");
+            } else {
+                const jsonData = JSON.parse(data);
+                res.status(200).json(jsonData);
+            }
+        });
+    } catch (error) {
+        console.error("An error occurred in the /fetch route:", error);
+        res.status(500).send("Something went wrong on the server.");
+    }
 });
