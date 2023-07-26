@@ -16,15 +16,13 @@ async function getBrowserInstance() {
 }
 
 
-
 // Countdown section
 let count = 49;
 let activeButton = 0;
 let interval;
 
 function startCountdown() {
-    interval = setInterval(() => {
-
+    const interval = setInterval(() => {
         if (count > 0) {
             count--;
             activeButton++;
@@ -32,8 +30,14 @@ function startCountdown() {
             clearInterval(interval);
             restartCountdown();
         }
+
+        if (count === 6) {
+            scrapeAndStoreData(); // Call the scrapeAndStoreData() function here when count is 6
+        }
+        console.log(count);
     }, 1000);
 }
+
 
 function restartCountdown() {
     count = 49;
@@ -47,127 +51,128 @@ app.get("/countdown", (req, res) => {
 
 // Start the countdown when the server starts
 startCountdown();
+setInterval(() => {
+    console.log(`this is ${count}`)
+}, 1000)
 
-const intervalInMilliseconds = 1000; // 7 seconds
+
+
+
 
 async function scrapeAndStoreData() {
-    if (count === 6) {
-        try {
-            const browser = await getBrowserInstance();
-            const page = await browser.newPage();
+    console.log("started")
+    try {
+        const browser = await getBrowserInstance();
+        const page = await browser.newPage();
 
 
-            await page.goto(
-                "https://logigames.bet9ja.com/Games/Launcher?gameId=11000&provider=0&pff=1&skin=201"
-            );
+        await page.goto(
+            "https://logigames.bet9ja.com/Games/Launcher?gameId=11000&provider=0&pff=1&skin=201"
+        );
 
 
 
 
-            await page.waitForSelector('.balls span'); // Wait for the target elements to be available
+        await page.waitForSelector('.balls span'); // Wait for the target elements to be available
 
-            const balls = await page.evaluate(() => {
-                const elements = Array.from(document.querySelectorAll('.balls span'));
-                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+        const balls = await page.evaluate(() => {
+            const elements = Array.from(document.querySelectorAll('.balls span'));
+            return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+        });
+
+        await page.waitForSelector('.statistics > tbody > tr > td'); // Wait for the target elements to be available
+
+        const statistics = await page.evaluate(() => {
+            const elements = Array.from(document.querySelectorAll('.statistics > tbody > tr > td'));
+            return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+        });
+
+
+        await page.waitForSelector('.statistics > tbody > tr > td > .colours'); // Wait for the target elements to be available
+
+        const statistics1 = await page.evaluate(() => {
+            const elements = Array.from(document.querySelectorAll('.statistics > tbody > tr > td > .colours'));
+            return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+        });
+
+
+        await page.waitForSelector('.hot .ball-holder .ball-value'); // Wait for the target elements to be available
+
+        const statistics2 = await page.evaluate(() => {
+            const elements = Array.from(document.querySelectorAll('.hot .ball-holder .ball-value'));
+            return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+        });
+
+
+
+        await page.waitForSelector('.cold .ball-holder .ball-value'); // Wait for the target elements to be available
+
+        const statistics3 = await page.evaluate(() => {
+            const elements = Array.from(document.querySelectorAll('.cold .ball-holder .ball-value'));
+            return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+        })
+
+
+
+        await page.waitForSelector('.hot .stats__numbers-count--value'); // Wait for the target elements to be available
+
+        const statistics4 = await page.evaluate(() => {
+            const elements = Array.from(document.querySelectorAll('.hot .stats__numbers-count--value'));
+            return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+        });
+
+
+
+
+
+        await page.waitForSelector('.cold .stats__numbers-count--value'); // Wait for the target elements to be available
+
+        const statistics5 = await page.evaluate(() => {
+            const elements = Array.from(document.querySelectorAll('.cold .stats__numbers-count--value'));
+            return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
+        });
+
+
+
+
+        await browser.close();
+
+
+        const data = {
+            balls,
+            statistics,
+            statistics1,
+            statistics2,
+            statistics3,
+            statistics4,
+            statistics5,
+        };
+
+        const jsonData = JSON.stringify(data);
+        let previousData = fs.readFileSync("./scraped-data.json", "utf8"); // Read the current data from scraped-data.json
+
+        // Check if the newly scraped data is different from the previous data
+        if (jsonData !== previousData) {
+            fs.writeFile("./scraped-data.json", jsonData, (err) => {
+                if (err) {
+                    console.error("An error occurred while writing the file:", err);
+                } else {
+                    console.log("Data scraped and stored successfully!");
+                    previousData = jsonData; // Update the previousData variable with the new data
+                }
             });
-
-            await page.waitForSelector('.statistics > tbody > tr > td'); // Wait for the target elements to be available
-
-            const statistics = await page.evaluate(() => {
-                const elements = Array.from(document.querySelectorAll('.statistics > tbody > tr > td'));
-                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
-            });
-
-
-            await page.waitForSelector('.statistics > tbody > tr > td > .colours'); // Wait for the target elements to be available
-
-            const statistics1 = await page.evaluate(() => {
-                const elements = Array.from(document.querySelectorAll('.statistics > tbody > tr > td > .colours'));
-                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
-            });
-
-
-            await page.waitForSelector('.hot .ball-holder .ball-value'); // Wait for the target elements to be available
-
-            const statistics2 = await page.evaluate(() => {
-                const elements = Array.from(document.querySelectorAll('.hot .ball-holder .ball-value'));
-                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
-            });
-
-
-
-            await page.waitForSelector('.cold .ball-holder .ball-value'); // Wait for the target elements to be available
-
-            const statistics3 = await page.evaluate(() => {
-                const elements = Array.from(document.querySelectorAll('.cold .ball-holder .ball-value'));
-                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
-            })
-
-
-
-            await page.waitForSelector('.hot .stats__numbers-count--value'); // Wait for the target elements to be available
-
-            const statistics4 = await page.evaluate(() => {
-                const elements = Array.from(document.querySelectorAll('.hot .stats__numbers-count--value'));
-                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
-            });
-
-
-
-
-
-            await page.waitForSelector('.cold .stats__numbers-count--value'); // Wait for the target elements to be available
-
-            const statistics5 = await page.evaluate(() => {
-                const elements = Array.from(document.querySelectorAll('.cold .stats__numbers-count--value'));
-                return elements.map(element => element.textContent.trim()); // Trim whitespace if needed
-            });
-
-
-
-
-            await browser.close();
-
-
-            const data = {
-                balls,
-                statistics,
-                statistics1,
-                statistics2,
-                statistics3,
-                statistics4,
-                statistics5,
-            };
-
-            const jsonData = JSON.stringify(data);
-            let previousData = fs.readFileSync("./scraped-data.json", "utf8"); // Read the current data from scraped-data.json
-
-            // Check if the newly scraped data is different from the previous data
-            if (jsonData !== previousData) {
-                fs.writeFile("./scraped-data.json", jsonData, (err) => {
-                    if (err) {
-                        console.error("An error occurred while writing the file:", err);
-                    } else {
-                        console.log("Data scraped and stored successfully!");
-                        previousData = jsonData; // Update the previousData variable with the new data
-                    }
-                });
-            } else {
-                console.log("Data is the same!");
-            }
-        } catch (error) {
-            console.error("An error occurred during web scraping:", error);
-            res.status(500).send("Something went wrong on the server.");
-
+        } else {
+            console.log("Data is the same!");
         }
+    } catch (error) {
+        console.error("An error occurred during web scraping:", error);
+        res.status(500).send("Something went wrong on the server.");
+
     }
+
 }
 
-// Run the scraping and storing process initially
-scrapeAndStoreData();
 
-// Schedule the scraping and storing process to run every 7 seconds
-setInterval(scrapeAndStoreData, intervalInMilliseconds);
 
 // Start the Express server
 app.listen(5000, () => {
